@@ -14,22 +14,7 @@ cpu_metric_file="$(get_tmux_option "@sysstat_cpu_tmp_dir" "/dev/null")/cpu_colle
 
 get_cpu_usage() {
   if is_osx; then
-    if command_exists "iostat"; then
-      iostat -w "$refresh_interval" -c "$samples_count" \
-        | gstdbuf -o0 awk 'NR > 2 { print 100-$(NF-3); }'
-    else
-      top -l "$samples_count" -s "$refresh_interval" -n 0 \
-        | sed -u -nr '/CPU usage/s/.*,[[:space:]]*([0-9]+[.,][0-9]*)%[[:space:]]*idle.*/\1/p' \
-        | gstdbuf -o0 awk '{ print 100-$0 }'
-    fi
-  elif ! command_exists "vmstat"; then
-    if is_freebsd; then
-      vmstat -n "$refresh_interval" -c "$samples_count" \
-        | stdbuf -o0 awk 'NR>2 {print 100-$(NF-0)}'
-    else
-      vmstat -n "$refresh_interval" "$samples_count" \
-        | stdbuf -o0 awk 'NR>2 {print 100-$(NF-2)}'
-    fi
+		top -l  2 | grep -E "^CPU" | tail -1 | awk '{ print $3 + $5"%" }'
   else
     if is_freebsd; then
       top -d"$samples_count" \
