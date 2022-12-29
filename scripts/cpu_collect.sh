@@ -14,7 +14,7 @@ cpu_metric_file="$(get_tmux_option "@sysstat_cpu_tmp_dir" "/dev/null")/cpu_colle
 
 get_cpu_usage() {
   if is_osx; then
-		top -l  2 | grep -E "^CPU" | tail -1 | awk '{ print $3 + $5"%" }'
+		top -l  2 | grep -E "^CPU" | tail -1 | awk '{ print $3 + $5 }'
   else
     if is_freebsd; then
       top -d"$samples_count" \
@@ -35,4 +35,3 @@ main() {
 }
 
 main
-
